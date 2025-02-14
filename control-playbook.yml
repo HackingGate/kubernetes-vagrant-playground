@@ -1,0 +1,18 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Install containerd"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/common-install-containerd.yml"
+
+    - name: "Install Kubernetes"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/common-install-kubernetes.yml"
+
+    - name: "Setup Kubernetes on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-setup-kubernetes.yml"
+
+    - name: "Setup Helm on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-setup-helm.yml"
+
+    - name: "Generate join command on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-generate-join.yml"

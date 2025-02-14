@@ -1,0 +1,47 @@
+- name: Install required packages
+  apt:
+    name:
+      - apt-transport-https
+    update_cache: yes
+    state: present
+
+- name: Add helm GPG key
+  shell: |
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/helm.gpg] https://baltocdn.com/helm/stable/debian/ all main" | \
+    sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+
+- name: Add helm repository 
+  shell: |
+    curl https://baltocdn.com/helm/signing.asc | gpg --dearmor | sudo tee /usr/share/keyrings/helm.gpg > /dev/null
+  args:
+    creates: /usr/share/keyrings/helm.gpg
+
+- name: Install helm
+  apt:
+    name:
+      - helm
+    update_cache: yes
+    state: present
+
+- name: Add ingress-nginx Helm repository
+  kubernetes.core.helm_repository:
+    name: ingress-nginx
+    repo_url: https://kubernetes.github.io/ingress-nginx
+
+- name: Install NGINX Ingress Controller
+  kubernetes.core.helm:
+    name: nginx-ingress
+    chart_ref: ingress-nginx/ingress-nginx
+    release_namespace: ingress-nginx
+    create_namespace: true
+    wait: yes
+    wait_timeout: 300
+    atomic: true
+    values:
+      controller:
+        replicaCount: 2
+        nodeSelector:
+          kubernetes.io/os: linux
+      defaultBackend:
+        nodeSelector:
+          kubernetes.io/os: linux
