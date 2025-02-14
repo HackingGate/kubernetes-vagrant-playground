@@ -1,5 +1,7 @@
 # Kubernetes Cluster Playground on Vagrant VM
 
+[![Lint](https://github.com/HackingGate/kubernetes-vagrant-playground/actions/workflows/lint.yml/badge.svg)](https://github.com/HackingGate/kubernetes-vagrant-playground/actions/workflows/lint.yml)
+
 This repository contains Ansible playbooks and configuration for setting up a Kubernetes cluster using Vagrant.
 
 ## Usage
