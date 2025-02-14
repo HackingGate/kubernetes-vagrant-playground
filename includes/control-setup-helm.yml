@@ -22,26 +22,3 @@
       - helm
     update_cache: yes
     state: present
-
-- name: Add ingress-nginx Helm repository
-  kubernetes.core.helm_repository:
-    name: ingress-nginx
-    repo_url: https://kubernetes.github.io/ingress-nginx
-
-- name: Install NGINX Ingress Controller
-  kubernetes.core.helm:
-    name: nginx-ingress
-    chart_ref: ingress-nginx/ingress-nginx
-    release_namespace: ingress-nginx
-    create_namespace: true
-    wait: yes
-    wait_timeout: 300s
-    atomic: true
-    values:
-      controller:
-        replicaCount: 2
-        nodeSelector:
-          kubernetes.io/os: linux
-      defaultBackend:
-        nodeSelector:
-          kubernetes.io/os: linux
