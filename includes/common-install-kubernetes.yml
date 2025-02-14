@@ -13,7 +13,7 @@
   file:
     path: /etc/apt/keyrings
     state: directory
-    mode: '0755'
+    mode: "0755"
 
 - name: Add Kubernetes GPG key
   shell: |
@@ -86,8 +86,8 @@
 - name: Enable SystemdCgroup in containerd config
   replace:
     path: /etc/containerd/config.toml
-    regexp: 'SystemdCgroup = false'
-    replace: 'SystemdCgroup = true'
+    regexp: "SystemdCgroup = false"
+    replace: "SystemdCgroup = true"
 
 - name: Enable and restart containerd
   systemd:
@@ -97,7 +97,7 @@
 
 - name: Disable swap
   command: swapoff -a
-  
+
 - name: Remove swap from fstab
   replace:
     path: /etc/fstab
