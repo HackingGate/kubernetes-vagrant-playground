@@ -16,7 +16,7 @@
   copy:
     src: ./k8s-join.sh
     dest: /tmp/k8s-join.sh
-    mode: '0755'
+    mode: "0755"
   when: node_check.rc != 0
 
 - name: "Join the node to cluster"

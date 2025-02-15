@@ -6,5 +6,5 @@
 - name: Fetch /tmp/k8s-join.sh from control node to local
   fetch:
     src: /tmp/k8s-join.sh
-    dest: ./k8s-join.sh 
+    dest: ./k8s-join.sh
     flat: true
