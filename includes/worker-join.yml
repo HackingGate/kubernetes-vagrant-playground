@@ -1,13 +1,17 @@
 - name: "Copy the join command to server location"
   copy:
-    src: /tmp/join
-    dest: /tmp/join-command.sh
-    mode: 0777
+    src: /tmp/k8s-join.sh
+    dest: /tmp/k8s-join.sh
+    mode: preserve
   become: false
 
 - name: "Join the node to cluster"
-  command: sh /tmp/join-command.sh
+  shell: /tmp/k8s-join.sh 2>&1 | tee /tmp/k8s-join.log
   register: join_command_result
   until: join_command_result.rc == 0
   retries: 30
   delay: 5
+
+- name: "Display join command output"
+  debug:
+    msg: "{{ join_command_result.stdout_lines }}"

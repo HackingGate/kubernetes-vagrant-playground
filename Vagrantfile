@@ -19,7 +19,6 @@ Vagrant.configure("2") do |config|
   ansible_config = proc do |ansible|
     ansible.compatibility_mode = "2.0"
     ansible.become = true
-    ansible.verbose = "v"
     ansible.extra_vars = {
       k8s_version: K8S_VERSION,
       control_ip: CONTROL_IP,

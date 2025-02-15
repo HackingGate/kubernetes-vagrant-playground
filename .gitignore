@@ -24,7 +24,7 @@ Thumbs.db
 *.swo
 
 # Kubernetes
-join.sh
+k8s-join.sh
 kubeconfig
 *.pem
 *.crt
