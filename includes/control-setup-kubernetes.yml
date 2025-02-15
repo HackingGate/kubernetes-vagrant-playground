@@ -35,7 +35,7 @@
   ansible.builtin.command: kubectl --kubeconfig=/etc/kubernetes/admin.conf get nodes
   register: api_status
   until: api_status.rc == 0
-  retries: 60
+  retries: 30
   delay: 5
 
 - name: Install Flannel network plugin
@@ -44,8 +44,8 @@
   changed_when: flannel_result.rc == 0
 
 - name: Wait for Flannel pods to be ready
-  ansible.builtin.command: kubectl --kubeconfig=/etc/kubernetes/admin.conf wait --namespace=kube-flannel --for=condition=ready pod --selector=app=flannel --timeout=600s
+  ansible.builtin.command: kubectl --kubeconfig=/etc/kubernetes/admin.conf wait --namespace=kube-flannel --for=condition=ready pod --selector=app=flannel --timeout=60s
   register: flannel_wait
   until: flannel_wait.rc == 0
-  retries: 60
+  retries: 30
   delay: 5

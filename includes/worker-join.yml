@@ -7,3 +7,7 @@
 
 - name: "Join the node to cluster"
   command: sh /tmp/join-command.sh
+  register: join_command_result
+  until: join_command_result.rc == 0
+  retries: 30
+  delay: 5
