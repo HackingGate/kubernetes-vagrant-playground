@@ -7,7 +7,8 @@ CONTROL_IP = "192.168.121.10"
 WORKER_IPS = ["192.168.121.11", "192.168.121.12"]
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "./output-k8s-base/package.box"
+  config.vm.box = "k8s-base"
+  config.vm.box_url = "file://output-k8s-base/package.box"
   config.vm.box_check_update = false
   
   # SSH key configuration for Ansible
@@ -31,7 +32,7 @@ Vagrant.configure("2") do |config|
     control.vm.network "private_network", ip: CONTROL_IP
 
     # Trigger to remove obsolete k8s-join.sh from the host machine
-    control.trigger.before [:destroy, :halt, :provision, :reload, :resume, :suspend, :up] do |trigger|
+    control.trigger.before [:destroy, :provision] do |trigger|
       trigger.name = "Remove obsolete k8s-join.sh from host"
       trigger.run = { inline: "rm -f ./k8s-join.sh" }
     end
