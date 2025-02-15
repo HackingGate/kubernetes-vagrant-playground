@@ -3,7 +3,7 @@
     name:
       - ca-certificates
       - curl
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Create Docker keyrings directory
@@ -33,7 +33,7 @@
   apt:
     name:
       - containerd.io
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Remove containerd config file
@@ -44,5 +44,5 @@
 - name: Enable and restart containerd service
   systemd:
     name: containerd
-    enabled: yes
+    enabled: true
     state: restarted

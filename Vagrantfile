@@ -21,7 +21,6 @@ Vagrant.configure("2") do |config|
     ansible.become = true
     ansible.extra_vars = {
       k8s_version: K8S_VERSION,
-      control_ip: CONTROL_IP,
       pod_network_cidr: POD_NETWORK_CIDR,
     }
   end

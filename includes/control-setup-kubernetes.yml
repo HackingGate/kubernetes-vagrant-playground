@@ -1,5 +1,8 @@
 - name: Initialize the Kubernetes cluster using kubeadm
-  ansible.builtin.command: kubeadm init --apiserver-advertise-address="{{ control_ip }}" --apiserver-cert-extra-sans="{{ control_ip }}" --pod-network-cidr="{{ pod_network_cidr }}"
+  ansible.builtin.command: >
+    kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }}
+    --apiserver-cert-extra-sans="k8s-control"
+    --pod-network-cidr="{{ pod_network_cidr }}"
 
 - name: Create .kube directory for vagrant user
   ansible.builtin.file:
@@ -19,7 +22,7 @@
   ansible.builtin.copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/vagrant/.kube/config
-    remote_src: yes
+    remote_src: true
     owner: vagrant
     group: vagrant
     mode: "0600"
@@ -28,7 +31,7 @@
   ansible.builtin.copy:
     src: /etc/kubernetes/admin.conf
     dest: /root/.kube/config
-    remote_src: yes
+    remote_src: true
     mode: "0600"
 
 - name: Wait for Kubernetes API server to be ready

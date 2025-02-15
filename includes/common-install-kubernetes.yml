@@ -6,7 +6,7 @@
       - curl
       - software-properties-common
       - gnupg
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Create Kubernetes keyrings directory
@@ -35,7 +35,7 @@
       - kubelet
       - kubeadm
       - kubectl
-    update_cache: yes
+    update_cache: true
     state: present
 
 - name: Hold Kubernetes packages
@@ -92,7 +92,7 @@
 - name: Enable and restart containerd
   systemd:
     name: containerd
-    enabled: yes
+    enabled: true
     state: restarted
 
 - name: Disable swap
@@ -106,10 +106,10 @@
 
 - name: Reload systemd
   systemd:
-    daemon_reload: yes
+    daemon_reload: true
 
 - name: Enable and start kubelet
   systemd:
     name: kubelet
-    enabled: yes
+    enabled: true
     state: started

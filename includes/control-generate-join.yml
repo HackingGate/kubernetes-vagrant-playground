@@ -3,9 +3,10 @@
   changed_when: join_command.rc != 0
   register: join_command
 
-- name: Copy join command to local file
-  copy:
+- name: Copy join command to worker nodes
+  synchronize:
     src: /tmp/k8s-join.sh
     dest: /tmp/k8s-join.sh
-    mode: preserve
-    flat: true
+    mode: push
+    use_ssh_args: true
+  delegate_to: k8s-control

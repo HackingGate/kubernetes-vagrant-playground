@@ -4,13 +4,6 @@
     state: present
     timeout: 600
 
-- name: "Copy the join command to server location"
-  copy:
-    src: /tmp/k8s-join.sh
-    dest: /tmp/k8s-join.sh
-    mode: preserve
-  become: false
-
 - name: "Join the node to cluster"
   shell: /tmp/k8s-join.sh 2>&1 | tee /tmp/k8s-join.log
   register: join_command_result
