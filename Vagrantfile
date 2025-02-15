@@ -31,7 +31,7 @@ Vagrant.configure("2") do |config|
     control.vm.network "private_network", ip: CONTROL_IP
 
     # Trigger to remove obsolete k8s-join.sh from the host machine
-    config.trigger.before [:destroy, :halt, :provision, :reload, :resume, :suspend, :up] do |trigger|
+    control.trigger.before [:destroy, :halt, :provision, :reload, :resume, :suspend, :up] do |trigger|
       trigger.name = "Remove obsolete k8s-join.sh from host"
       trigger.run = { inline: "rm -f ./k8s-join.sh" }
     end
