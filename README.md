@@ -6,16 +6,34 @@ This repository contains Ansible playbooks and configuration for setting up a Ku
 
 ## Usage
 
-#### Create the virtual machines and provision the Kubernetes cluster
+### Create the Virtual Machines and Provision the Kubernetes Cluster
 
 ```bash
 vagrant up
 ```
 
-#### Destroy the virtual machines
+This command will:
+
+1. Create the virtual machines
+2. Install containerd runtime
+3. Install Kubernetes components
+4. Initialize the control plane
+5. Join worker nodes to the cluster
+6. Install Helm package manager
+
+### Verify Cluster Status
+
+SSH into the control plane node and check the cluster status:
+
+```bash
+vagrant ssh k8s-control
+kubectl get nodes
+```
+
+### Destroy the Cluster
+
+When you're done experimenting, you can destroy all VMs:
 
 ```bash
 vagrant destroy
 ```
-
-Refer to the individual playbooks and included tasks for more details on the cluster setup and configuration.
