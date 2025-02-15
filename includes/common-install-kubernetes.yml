@@ -1,4 +1,4 @@
-- name: Install kubernetes components
+- name: Install Required Packages
   apt:
     name:
       - apt-transport-https

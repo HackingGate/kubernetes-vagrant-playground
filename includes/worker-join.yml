@@ -1,8 +1,10 @@
-- name: "Wait until join command is generated from control node"
-  ansible.builtin.wait_for:
-    path: /tmp/k8s-join.sh
-    state: present
-    timeout: 600
+- name: Push join script to /tmp/k8s-join.sh on each worker
+  copy:
+    src: ./k8s-join.sh
+    dest: /tmp/k8s-join.sh
+    mode: '0755'
+  retries: 30
+  delay: 5
 
 - name: "Join the node to cluster"
   shell: /tmp/k8s-join.sh 2>&1 | tee /tmp/k8s-join.log
