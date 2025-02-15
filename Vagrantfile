@@ -21,6 +21,7 @@ Vagrant.configure("2") do |config|
     ansible.extra_vars = {
       k8s_version: K8S_VERSION,
       pod_network_cidr: POD_NETWORK_CIDR,
+      control_ip: CONTROL_IP,
     }
   end
 
@@ -30,8 +31,7 @@ Vagrant.configure("2") do |config|
     control.vm.network "private_network", ip: CONTROL_IP
 
     # Trigger to remove obsolete k8s-join.sh from the host machine
-    # Only executed when provisioning k8s-control.
-    control.trigger.before :provision do |trigger|
+    config.trigger.before [:destroy, :halt, :provision, :reload, :resume, :suspend, :up] do |trigger|
       trigger.name = "Remove obsolete k8s-join.sh from host"
       trigger.run = { inline: "rm -f ./k8s-join.sh" }
     end
