@@ -1,3 +1,9 @@
+- name: "Wait until join command is generated from control node"
+  ansible.builtin.wait_for:
+    path: /tmp/k8s-join.sh
+    state: present
+    timeout: 600
+
 - name: "Copy the join command to server location"
   copy:
     src: /tmp/k8s-join.sh
