@@ -4,7 +4,19 @@
 
 This repository contains Ansible playbooks and configuration for setting up a Kubernetes cluster using Vagrant.
 
+## Prerequisits
+
+- [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
+- [Vagrant](https://developer.hashicorp.com/vagrant/install)
+- [Vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
+
 ## Usage
+
+### Build base box with Packer
+
+```bash
+./build-base-box.sh
+```
 
 ### Create the Virtual Machines and Provision the Kubernetes Cluster
 

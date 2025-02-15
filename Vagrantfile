@@ -7,7 +7,7 @@ CONTROL_IP = "192.168.121.10"
 WORKER_IPS = ["192.168.121.11", "192.168.121.12"]
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "alvistack/ubuntu-24.04"
+  config.vm.box = "./output-k8s-base/package.box"
   config.vm.box_check_update = false
   
   # SSH key configuration for Ansible
@@ -44,7 +44,8 @@ Vagrant.configure("2") do |config|
 
     control.vm.provision "ansible" do |ansible|
       ansible_config.call(ansible)
-      ansible.playbook = "control-playbook.yml"
+      ansible.playbook = "playbook.yml"
+      ansible.tags = ["control"]
     end
   end
 
@@ -62,7 +63,8 @@ Vagrant.configure("2") do |config|
       
       worker.vm.provision "ansible" do |ansible|
         ansible_config.call(ansible)
-        ansible.playbook = "worker-playbook.yml"
+        ansible.playbook = "playbook.yml"
+        ansible.tags = ["worker"]
       end
     end
   end
