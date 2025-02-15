@@ -2,7 +2,6 @@
 # vi: set ft=ruby :
 
 K8S_VERSION = "v1.32"
-
 POD_NETWORK_CIDR = "10.244.0.0/16"
 CONTROL_IP = "192.168.121.10"
 WORKER_IPS = ["192.168.121.11", "192.168.121.12"]
@@ -25,11 +24,18 @@ Vagrant.configure("2") do |config|
     }
   end
 
-  # control Node
+  # Control Node
   config.vm.define "k8s-control" do |control|
     control.vm.hostname = "k8s-control"
     control.vm.network "private_network", ip: CONTROL_IP
-    
+
+    # Trigger to remove obsolete k8s-join.sh from the host machine
+    # Only executed when provisioning k8s-control.
+    control.trigger.before :provision do |trigger|
+      trigger.name = "Remove obsolete k8s-join.sh from host"
+      trigger.run = { inline: "rm -f ./k8s-join.sh" }
+    end
+
     control.vm.provider "libvirt" do |lv|
       lv.memory = 2048
       lv.cpus = 2

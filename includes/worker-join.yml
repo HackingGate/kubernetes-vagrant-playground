@@ -1,13 +1,19 @@
+- name: Waiting for src ./k8s-join.sh to be present on local
+  become: false
+  wait_for:
+    path: "./k8s-join.sh"
+    state: present
+    timeout: 600
+  delegate_to: localhost
+
 - name: Push join script to /tmp/k8s-join.sh on each worker
   copy:
     src: ./k8s-join.sh
     dest: /tmp/k8s-join.sh
     mode: '0755'
-  retries: 30
-  delay: 5
 
 - name: "Join the node to cluster"
-  command: /tmp/k8s-join.sh
+  shell: /tmp/k8s-join.sh
   register: join_command_result
   until: join_command_result.rc == 0
   retries: 30

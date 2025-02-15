@@ -2,11 +2,6 @@
 - hosts: all
   become: true
   tasks:
-    - name: "Remove obsolete k8s-join.sh from local"
-      ansible.builtin.file:
-        path: ./k8s-join.sh
-        state: absent
-
     - name: "Install containerd"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/common-install-containerd.yml"
 
