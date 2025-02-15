@@ -7,12 +7,8 @@
   delay: 5
 
 - name: "Join the node to cluster"
-  shell: /tmp/k8s-join.sh 2>&1 | tee /tmp/k8s-join.log
+  command: /tmp/k8s-join.sh
   register: join_command_result
   until: join_command_result.rc == 0
   retries: 30
   delay: 5
-
-- name: "Display join command output"
-  debug:
-    msg: "{{ join_command_result.stdout_lines }}"
