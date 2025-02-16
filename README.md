@@ -14,6 +14,7 @@ This repository contains Ansible playbooks and configuration for setting up a Ku
 ## Architecture
 
 The cluster consists of:
+
 - 1 control plane node (2GB RAM, 2 CPUs)
 - 2 worker nodes (2GB RAM, 2 CPUs each)
 - Private network: 192.168.121.0/24
@@ -28,6 +29,7 @@ The cluster consists of:
 ```
 
 This command will:
+
 1. Download the Debian 12 base box
 2. Install system updates and required packages
 3. Install containerd container runtime
@@ -41,6 +43,7 @@ vagrant up
 ```
 
 This command will:
+
 1. Create three virtual machines using the k8s-base box
 2. Initialize the Kubernetes control plane on k8s-control
 3. Set up pod networking
@@ -53,15 +56,17 @@ This command will:
 The kubeconfig file is automatically configured on the control plane node. To access and verify the cluster:
 
 1. SSH into the control plane:
+
    ```bash
    vagrant ssh k8s-control
    ```
 
 2. Verify cluster status:
+
    ```bash
    # Check node status
    kubectl get nodes
-   
+
    # View running system pods
    kubectl get pods -A
    ```
