@@ -1,13 +1,9 @@
-- name: Update, upgrade, and restart instance
-  hosts: all
-  become: yes
-  tasks:
-    - name: Update the package list and upgrade all packages
-      apt:
-        update_cache: yes
-        upgrade: yes
-        autoremove: yes
+- name: Update the package list and upgrade all packages
+  apt:
+    update_cache: yes
+    upgrade: yes
+    autoremove: yes
 
-    - name: Reboot the instance
-      reboot:
-        reboot_timeout: 300
+- name: Reboot the instance
+  reboot:
+    reboot_timeout: 300
