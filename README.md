@@ -48,31 +48,25 @@ This command will:
 5. Join worker nodes to the cluster
 6. Install Helm package manager on the control plane
 
-### Verify Cluster Status
+### Access and Verify the Cluster
 
-SSH into the control plane node and check the cluster status:
-
-```bash
-vagrant ssh k8s-control
-kubectl get nodes
-```
-
-You should see three nodes (one control plane and two workers) in Ready state.
-
-### Access the Cluster
-
-The kubeconfig file is automatically configured on the control plane node. To access the cluster:
+The kubeconfig file is automatically configured on the control plane node. To access and verify the cluster:
 
 1. SSH into the control plane:
    ```bash
    vagrant ssh k8s-control
    ```
 
-2. Use kubectl commands:
+2. Verify cluster status:
    ```bash
+   # Check node status
    kubectl get nodes
+   
+   # View running system pods
    kubectl get pods -A
    ```
+
+You should see three nodes (one control plane and two workers) in Ready state.
 
 ### Destroy the Cluster
 
