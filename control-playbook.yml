@@ -4,12 +4,9 @@
   tasks:
     - name: "Setup Kubernetes on control node"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-setup-kubernetes.yml"
-      tags: ["control", "kubernetes"]
 
     - name: "Setup Helm on control node"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-setup-helm.yml"
-      tags: ["control", "helm"]
 
     - name: "Generate join command on control node"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-generate-join.yml"
-      tags: ["control", "join"]

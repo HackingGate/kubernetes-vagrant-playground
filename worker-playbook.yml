@@ -4,4 +4,3 @@
   tasks:
     - name: "Run join command on worker nodes"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/worker-join.yml"
-      tags: ["worker", "join"]
