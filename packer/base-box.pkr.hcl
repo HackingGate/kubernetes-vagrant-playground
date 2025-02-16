@@ -33,8 +33,7 @@ build {
     use_proxy         = false
 
     extra_arguments = [
-      "--extra-vars", "k8s_version=${var.k8s_version}",
-      "-v"
+      "--extra-vars", "k8s_version=${var.k8s_version}"
     ]
   }
 }
