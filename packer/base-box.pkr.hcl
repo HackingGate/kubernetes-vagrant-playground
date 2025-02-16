@@ -37,11 +37,20 @@ source "vagrant" "k8s-base" {
 build {
   sources = ["source.vagrant.k8s-base"]
 
+  provisioner "shell-local" {
+    inline = ["echo foo"]
+  }
+
   provisioner "ansible" {
-    playbook_file = "./playbook.yml"
+    playbook_file     = "./playbook.yml"
+    user              = "vagrant"
+    use_proxy         = false
     extra_arguments = [
       "--tags", "base",
-      "--extra-vars", "ansible_host={{ .SSHHost }} k8s_version=${var.k8s_version} pod_network_cidr=${var.pod_network_cidr}",
+      "--private-key", "./output-k8s-base/.vagrant/machines/source/libvirt/private_key",
+      "--extra-vars", "ansible_password=vagrant",
+      "--extra-vars", "k8s_version=${var.k8s_version}",
+      "--extra-vars", "pod_network_cidr=${var.pod_network_cidr}",
       "-vvvv"
     ]
   }
