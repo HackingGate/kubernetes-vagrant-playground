@@ -1,6 +1,7 @@
 # Vagrant
 .vagrant/
 *.log
+output-k8s-base/
 
 # Virtual Machine
 *.box

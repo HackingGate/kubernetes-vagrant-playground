@@ -1,14 +1,14 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-K8S_VERSION = "v1.32"
 POD_NETWORK_CIDR = "10.244.0.0/16"
 CONTROL_IP = "192.168.121.10"
 WORKER_IPS = ["192.168.121.11", "192.168.121.12"]
 
 Vagrant.configure("2") do |config|
-  config.vm.box = "alvistack/ubuntu-24.04"
-  config.vm.box_check_update = false
+  config.vm.box = "k8s-base"
+  config.vm.box_url = "file://output-k8s-base/package.box"
+  config.vm.box_check_update = true
   
   # SSH key configuration for Ansible
   config.ssh.insert_key = true
@@ -18,11 +18,6 @@ Vagrant.configure("2") do |config|
   ansible_config = proc do |ansible|
     ansible.compatibility_mode = "2.0"
     ansible.become = true
-    ansible.extra_vars = {
-      k8s_version: K8S_VERSION,
-      pod_network_cidr: POD_NETWORK_CIDR,
-      control_ip: CONTROL_IP,
-    }
   end
 
   # Control Node
@@ -31,7 +26,7 @@ Vagrant.configure("2") do |config|
     control.vm.network "private_network", ip: CONTROL_IP
 
     # Trigger to remove obsolete k8s-join.sh from the host machine
-    control.trigger.before [:destroy, :halt, :provision, :reload, :resume, :suspend, :up] do |trigger|
+    control.trigger.before [:destroy, :provision] do |trigger|
       trigger.name = "Remove obsolete k8s-join.sh from host"
       trigger.run = { inline: "rm -f ./k8s-join.sh" }
     end
@@ -44,6 +39,10 @@ Vagrant.configure("2") do |config|
 
     control.vm.provision "ansible" do |ansible|
       ansible_config.call(ansible)
+      ansible.extra_vars = {
+        pod_network_cidr: POD_NETWORK_CIDR,
+        control_ip: CONTROL_IP,
+      }
       ansible.playbook = "control-playbook.yml"
     end
   end
