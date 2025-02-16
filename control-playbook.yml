@@ -2,14 +2,6 @@
 - hosts: all
   become: true
   tasks:
-    - name: "Install containerd"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/base-install-containerd.yml"
-      tags: ["base", "containerd"]
-
-    - name: "Install Kubernetes"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/base-install-kubernetes.yml"
-      tags: ["base", "kubernetes"]
-
     - name: "Setup Kubernetes on control node"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-setup-kubernetes.yml"
       tags: ["control", "kubernetes"]
@@ -21,7 +13,3 @@
     - name: "Generate join command on control node"
       ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/control-generate-join.yml"
       tags: ["control", "join"]
-
-    - name: "Run join command on worker nodes"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/worker-join.yml"
-      tags: ["worker", "join"]

@@ -45,8 +45,7 @@ Vagrant.configure("2") do |config|
 
     control.vm.provision "ansible" do |ansible|
       ansible_config.call(ansible)
-      ansible.playbook = "playbook.yml"
-      ansible.tags = ["control"]
+      ansible.playbook = "control-playbook.yml"
     end
   end
 
@@ -64,8 +63,7 @@ Vagrant.configure("2") do |config|
       
       worker.vm.provision "ansible" do |ansible|
         ansible_config.call(ansible)
-        ansible.playbook = "playbook.yml"
-        ansible.tags = ["worker"]
+        ansible.playbook = "worker-playbook.yml"
       end
     end
   end

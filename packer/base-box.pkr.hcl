@@ -42,11 +42,10 @@ build {
   }
 
   provisioner "ansible" {
-    playbook_file     = "./playbook.yml"
+    playbook_file     = "./base-playbook.yml"
     user              = "vagrant"
     use_proxy         = false
     extra_arguments = [
-      "--tags", "base",
       "--private-key", "./output-k8s-base/.vagrant/machines/source/libvirt/private_key",
       "--extra-vars", "ansible_password=vagrant",
       "--extra-vars", "k8s_version=${var.k8s_version}",

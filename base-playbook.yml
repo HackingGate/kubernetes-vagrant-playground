@@ -1,0 +1,9 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Install containerd"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/base-install-containerd.yml"
+
+    - name: "Install Kubernetes"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/base-install-kubernetes.yml"
