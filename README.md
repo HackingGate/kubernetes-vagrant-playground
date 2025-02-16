@@ -76,6 +76,13 @@ When you're done experimenting, you can destroy all VMs:
 vagrant destroy -f
 ```
 
+### Remove k8s-base box
+
+```bash
+vagrant box remove k8s-base
+rm -rf output-k8s-base
+```
+
 ## Network Configuration
 
 - Control plane: 192.168.121.10
