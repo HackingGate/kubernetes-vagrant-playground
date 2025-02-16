@@ -24,7 +24,12 @@ variable "pod_network_cidr" {
 source "vagrant" "k8s-base" {
   provider          = "libvirt"
   communicator      = "ssh"
-  source_path       = "alvistack/ubuntu-24.04"
+  insert_key        = true
+  ssh_username      = "vagrant"
+  ssh_password      = "vagrant"
+  ssh_port          = 22
+  ssh_wait_timeout  = "60s"
+  source_path       = "generic/debian12"
   add_force         = true
   box_name          = "k8s-base"
 }
@@ -33,11 +38,11 @@ build {
   sources = ["source.vagrant.k8s-base"]
 
   provisioner "ansible" {
-    playbook_file = "playbook.yml"
+    playbook_file = "./playbook.yml"
     extra_arguments = [
       "--tags", "base",
-      "--extra-vars", "k8s_version=${var.k8s_version} pod_network_cidr=${var.pod_network_cidr}"
+      "--extra-vars", "ansible_host={{ .SSHHost }} k8s_version=${var.k8s_version} pod_network_cidr=${var.pod_network_cidr}",
+      "-vvvv"
     ]
-    ansible_env_vars = ["ANSIBLE_ROLES_PATH=roles"]
   }
 }
