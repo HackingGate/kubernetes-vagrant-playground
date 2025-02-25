@@ -9,7 +9,8 @@ Vagrant.configure("2") do |config|
   config.vm.box = "k8s-base"
   config.vm.box_url = "file://output-k8s-base/package.box"
   config.vm.box_check_update = true
-  
+  config.vm.synced_folder ".", "/vagrant", disabled: true
+
   # SSH key configuration for Ansible
   config.ssh.insert_key = true
   config.ssh.forward_agent = true
