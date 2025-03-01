@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with non-zero status
 
 echo "Setting up Kubernetes Vagrant Playground..."
 
