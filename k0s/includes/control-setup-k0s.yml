@@ -78,8 +78,8 @@
 - name: Update kubeconfig server address
   ansible.builtin.replace:
     path: "{{ item }}"
-    regexp: 'https://localhost:6443'
-    replace: 'https://{{ control_ip }}:6443'
+    regexp: "https://localhost:6443"
+    replace: "https://{{ control_ip }}:6443"
   loop:
     - /home/vagrant/.kube/config
     - /root/.kube/config

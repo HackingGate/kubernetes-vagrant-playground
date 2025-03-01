@@ -8,10 +8,10 @@
       #!/bin/bash
       NODE_IP=$1
       TOKEN="{{ worker_token.stdout }}"
-      
+
       # Install k0s worker
       k0s install worker --token-file <(echo "$TOKEN")
-      
+
       # Start k0s worker service
       systemctl start k0sworker
       systemctl enable k0sworker
