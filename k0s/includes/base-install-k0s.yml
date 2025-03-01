@@ -1,0 +1,63 @@
+- name: Install Required Packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg
+    update_cache: true
+    state: present
+
+- name: Configure kernel modules for containerd
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Load kernel modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: Configure sysctl parameters
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: Apply sysctl parameters
+  command: sysctl --system
+
+- name: Set k0s version
+  set_fact:
+    k0s_version_arg: "{% if k0s_version is defined %}{{ k0s_version }}{% else %}latest{% endif %}"
+
+- name: Download k0s binary
+  get_url:
+    url: "https://github.com/k0sproject/k0s/releases/download/{{ k0s_version_arg }}/k0s-{{ k0s_version_arg }}-amd64"
+    dest: /usr/local/bin/k0s
+    mode: '0755'
+  when: k0s_version_arg != 'latest'
+
+- name: Download latest k0s binary
+  get_url:
+    url: "https://github.com/k0sproject/k0s/releases/latest/download/k0s-amd64"
+    dest: /usr/local/bin/k0s
+    mode: '0755'
+  when: k0s_version_arg == 'latest'
+
+- name: Create k0s directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0755'
+  loop:
+    - /etc/k0s
+    - /var/lib/k0s
