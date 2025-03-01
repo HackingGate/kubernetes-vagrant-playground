@@ -12,6 +12,28 @@ fetch_latest_k8s_version() {
   echo "$major_minor_version"
 }
 
+# Function to fetch latest stable k3s version
+fetch_latest_k3s_version() {
+  # Get latest stable version from GitHub API
+  local latest_version=$(curl -s https://api.github.com/repos/k3s-io/k3s/releases | grep "tag_name" | grep -v "alpha\|beta\|rc" | head -n 1 | cut -d '"' -f 4)
+  
+  # Extract only major.minor version (removing v prefix and patch version)
+  local major_minor_version=$(echo "$latest_version" | sed 's/^v//' | cut -d. -f1-2)
+  
+  echo "$major_minor_version"
+}
+
+# Function to fetch latest stable k0s version
+fetch_latest_k0s_version() {
+  # Get latest stable version from k0s API
+  local latest_version=$(curl -sSLf "https://docs.k0sproject.io/stable.txt")
+  
+  # Extract only major.minor version (removing v prefix and patch version)
+  local major_minor_version=$(echo "$latest_version" | sed 's/^v//' | cut -d. -f1-2)
+  
+  echo "$major_minor_version"
+}
+
 # Function to generate Packer configurations from template
 generate_packer_config() {
   local dist=$1
@@ -30,13 +52,19 @@ generate_packer_config() {
   echo "Generated packer/$dist-base-box.pkr.hcl"
 }
 
-# Get latest stable k8s version
+# Get latest stable versions for each distribution
 K8S_VERSION=$(fetch_latest_k8s_version)
-echo "Using latest stable Kubernetes version: $K8S_VERSION"
+K3S_VERSION=$(fetch_latest_k3s_version)
+K0S_VERSION=$(fetch_latest_k0s_version)
+
+echo "Using latest stable Kubernetes versions:"
+echo "- k8s: $K8S_VERSION"
+echo "- k3s: $K3S_VERSION"
+echo "- k0s: $K0S_VERSION"
 
 # Generate Packer configurations for each distribution
 generate_packer_config "k8s" "$K8S_VERSION"
-generate_packer_config "k3s" "$K8S_VERSION"
-generate_packer_config "k0s" "$K8S_VERSION"
+generate_packer_config "k3s" "$K3S_VERSION"
+generate_packer_config "k0s" "$K0S_VERSION"
 
 echo "All Packer configurations generated successfully!"
