@@ -11,29 +11,34 @@ packer {
   }
 }
 
-variable "k8s_version" {
+variable "distribution" {
   type    = string
-  default = "v1.32"
+  default = "k3s"
 }
 
-source "vagrant" "k8s-base" {
+variable "version" {
+  type    = string
+  default = "1.32"
+}
+
+source "vagrant" "k3s-base" {
   provider     = "libvirt"
   communicator = "ssh"
-  source_path  = "generic/debian12"
+  source_path  = "common-base"  # Use common-base box instead of generic/debian12
   add_force    = true
-  box_name     = "k8s-base"
+  box_name     = "k3s-base"
 }
 
 build {
-  sources = ["source.vagrant.k8s-base"]
+  sources = ["source.vagrant.k3s-base"]
 
   provisioner "ansible" {
-    playbook_file = "./base-playbook.yml"
+    playbook_file = "./k3s/base-playbook.yml"
     user          = "vagrant"
     use_proxy     = false
 
     extra_arguments = [
-      "--extra-vars", "k8s_version=${var.k8s_version}"
+      "--extra-vars", "k3s_version=${var.version}"
     ]
   }
 }

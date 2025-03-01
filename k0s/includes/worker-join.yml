@@ -1,0 +1,33 @@
+- name: Waiting for src ./k0s-join.sh to be present on local
+  become: false
+  wait_for:
+    path: "./k0s-join.sh"
+    state: present
+    timeout: 600
+  delegate_to: localhost
+
+- name: Check if node is already joined
+  shell: systemctl status k0sworker | grep "Active:" | grep -w "active (running)"
+  register: node_check
+  ignore_errors: true
+  changed_when: false
+
+- name: Push join script to /tmp/k0s-join.sh on each worker
+  copy:
+    src: ./k0s-join.sh
+    dest: /tmp/k0s-join.sh
+    mode: "0755"
+  when: node_check.rc != 0
+
+- name: "Join the node to cluster"
+  shell: /tmp/k0s-join.sh {{ ansible_host }}
+  register: join_command_result
+  until: join_command_result.rc == 0
+  retries: 30
+  delay: 5
+  when: node_check.rc != 0
+
+- name: Clean up join script
+  file:
+    path: /tmp/k0s-join.sh
+    state: absent
