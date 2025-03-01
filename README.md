@@ -189,18 +189,21 @@ For all distributions:
 ## Comparison of Kubernetes Distributions
 
 ### k8s (Standard Kubernetes)
+
 - Full-featured Kubernetes distribution
 - Requires more resources
 - More complex setup
 - Suitable for production-like environments
 
 ### k3s (Rancher)
+
 - Lightweight Kubernetes distribution
 - Single binary installation
 - Lower resource requirements
 - Suitable for edge computing, IoT, and development environments
 
 ### k0s (Mirantis)
+
 - Zero-friction Kubernetes distribution
 - Single binary, no dependencies
 - Minimal resource footprint
