@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with non-zero status
 
 # Check if distribution is provided
 if [ -z "$1" ]; then

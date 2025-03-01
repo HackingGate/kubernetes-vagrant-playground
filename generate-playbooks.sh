@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with non-zero status
 
 # Function to generate playbooks from templates
 generate_playbooks() {
