@@ -20,7 +20,7 @@ fi
 echo "Building $DISTRIBUTION base box..."
 
 # Init packer
-packer init packer
+packer init "packer/$DISTRIBUTION-base-box.pkr.hcl"
 
 # Build base box with optional version override
 if [ -z "$VERSION" ]; then
