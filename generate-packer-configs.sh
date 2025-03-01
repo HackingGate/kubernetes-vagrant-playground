@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e  # Exit immediately if a command exits with non-zero status
 
 # Function to fetch latest stable k8s version
 fetch_latest_k8s_version() {
