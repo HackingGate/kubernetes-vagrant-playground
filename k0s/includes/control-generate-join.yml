@@ -1,0 +1,25 @@
+- name: Generate k0s worker token
+  ansible.builtin.command: k0s token create --role=worker
+  register: worker_token
+
+- name: Create k0s join script
+  ansible.builtin.copy:
+    content: |
+      #!/bin/bash
+      NODE_IP=$1
+      TOKEN="{{ worker_token.stdout }}"
+      
+      # Install k0s worker
+      k0s install worker --token-file <(echo "$TOKEN")
+      
+      # Start k0s worker service
+      systemctl start k0sworker
+      systemctl enable k0sworker
+    dest: /tmp/k0s-join.sh
+    mode: "0755"
+
+- name: Fetch /tmp/k0s-join.sh from control node to local
+  fetch:
+    src: /tmp/k0s-join.sh
+    dest: ./k0s-join.sh
+    flat: true
