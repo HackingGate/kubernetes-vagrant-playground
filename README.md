@@ -68,6 +68,12 @@ First, run the setup script to generate all the necessary configuration files:
 ./setup.sh
 ```
 
+Second, download generic/debian12
+
+```bash
+vagrant box add generic/debian12 --provider=libvirt
+```
+
 ## Usage
 
 ### Build Base Box with Packer
