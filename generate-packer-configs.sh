@@ -6,10 +6,10 @@ fetch_latest_k8s_version() {
   # Get latest stable version from GitHub API
   local latest_version=$(curl -s https://api.github.com/repos/kubernetes/kubernetes/releases | grep "tag_name" | grep -v "alpha\|beta\|rc" | head -n 1 | cut -d '"' -f 4)
   
-  # Remove 'v' prefix if needed for your use case
-  # local latest_version=${latest_version#v}
+  # Extract only major.minor version (removing patch version)
+  local major_minor_version=$(echo "$latest_version" | cut -d. -f1-2)
   
-  echo "$latest_version"
+  echo "$major_minor_version"
 }
 
 # Function to generate Packer configurations from template
