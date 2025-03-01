@@ -13,32 +13,32 @@ packer {
 
 variable "distribution" {
   type    = string
-  default = "k3s"
+  default = "{{ distribution }}"
 }
 
 variable "version" {
   type    = string
-  default = "1.32"
+  default = "{{ version }}"
 }
 
-source "vagrant" "k3s-base" {
+source "vagrant" "{{ distribution }}-base" {
   provider     = "libvirt"
   communicator = "ssh"
   source_path  = "common-base"  # Use common-base box instead of generic/debian12
   add_force    = true
-  box_name     = "k3s-base"
+  box_name     = "{{ distribution }}-base"
 }
 
 build {
-  sources = ["source.vagrant.k3s-base"]
+  sources = ["source.vagrant.{{ distribution }}-base"]
 
   provisioner "ansible" {
-    playbook_file = "./k3s/base-playbook.yml"
+    playbook_file = "./{{ distribution }}/base-playbook.yml"
     user          = "vagrant"
     use_proxy     = false
 
     extra_arguments = [
-      "--extra-vars", "k3s_version=${var.version}"
+      "--extra-vars", "{{ distribution }}_version=${var.version}"
     ]
   }
 }

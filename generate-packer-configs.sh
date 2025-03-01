@@ -47,9 +47,19 @@ generate_packer_config() {
   # Replace placeholders in template
   sed -e "s/{{ distribution }}/$dist/g" \
       -e "s/{{ version }}/$version/g" \
-      packer/base-box.template.pkr.hcl > "packer/$dist-base-box.pkr.hcl"
+      packer/distribution-base-box.template.pkr.hcl > "packer/$dist-base-box.pkr.hcl"
   
   echo "Generated packer/$dist-base-box.pkr.hcl"
+}
+
+# Function to generate common base box configuration
+generate_common_base_config() {
+  echo "Generating Packer configuration for common base box..."
+  
+  # Copy the template directly (no replacements needed)
+  cp packer/common-base-box.template.pkr.hcl packer/common-base-box.pkr.hcl
+  
+  echo "Generated packer/common-base-box.pkr.hcl"
 }
 
 # Get latest stable versions for each distribution
@@ -61,6 +71,9 @@ echo "Using latest stable Kubernetes versions:"
 echo "- k8s: $K8S_VERSION"
 echo "- k3s: $K3S_VERSION"
 echo "- k0s: $K0S_VERSION"
+
+# Generate common base box configuration
+generate_common_base_config
 
 # Generate Packer configurations for each distribution
 generate_packer_config "k8s" "$K8S_VERSION"
