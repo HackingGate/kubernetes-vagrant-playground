@@ -39,7 +39,7 @@
   get_url:
     url: https://get.k3s.io
     dest: /tmp/k3s-install.sh
-    mode: '0755'
+    mode: "0755"
 
 - name: Set k3s version
   set_fact:

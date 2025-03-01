@@ -43,21 +43,21 @@
   get_url:
     url: "https://github.com/k0sproject/k0s/releases/download/{{ k0s_version_arg }}/k0s-{{ k0s_version_arg }}-amd64"
     dest: /usr/local/bin/k0s
-    mode: '0755'
+    mode: "0755"
   when: k0s_version_arg != 'latest'
 
 - name: Download latest k0s binary
   get_url:
     url: "https://github.com/k0sproject/k0s/releases/latest/download/k0s-amd64"
     dest: /usr/local/bin/k0s
-    mode: '0755'
+    mode: "0755"
   when: k0s_version_arg == 'latest'
 
 - name: Create k0s directories
   file:
     path: "{{ item }}"
     state: directory
-    mode: '0755'
+    mode: "0755"
   loop:
     - /etc/k0s
     - /var/lib/k0s
