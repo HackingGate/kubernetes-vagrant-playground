@@ -1,5 +1,16 @@
 #!/bin/bash
 
+# Function to fetch latest stable k8s version
+fetch_latest_k8s_version() {
+  # Get latest stable version from GitHub API
+  local latest_version=$(curl -s https://api.github.com/repos/kubernetes/kubernetes/releases | grep "tag_name" | grep -v "alpha\|beta\|rc" | head -n 1 | cut -d '"' -f 4)
+  
+  # Remove 'v' prefix if needed for your use case
+  # local latest_version=${latest_version#v}
+  
+  echo "$latest_version"
+}
+
 # Function to generate Packer configurations from template
 generate_packer_config() {
   local dist=$1
@@ -18,9 +29,13 @@ generate_packer_config() {
   echo "Generated packer/$dist-base-box.pkr.hcl"
 }
 
+# Get latest stable k8s version
+K8S_VERSION=$(fetch_latest_k8s_version)
+echo "Using latest stable Kubernetes version: $K8S_VERSION"
+
 # Generate Packer configurations for each distribution
-generate_packer_config "k8s" "v1.32"
-generate_packer_config "k3s" "v1.32"
-generate_packer_config "k0s" "v1.32"
+generate_packer_config "k8s" "$K8S_VERSION"
+generate_packer_config "k3s" "$K8S_VERSION"
+generate_packer_config "k0s" "$K8S_VERSION"
 
 echo "All Packer configurations generated successfully!"
