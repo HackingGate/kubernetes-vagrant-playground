@@ -86,6 +86,7 @@ First, build the common base box:
 ```
 
 This command will:
+
 1. Download the Debian 12 base box
 2. Install system updates and required packages
 3. Package the resulting VM into a new Vagrant box called "common-base"
