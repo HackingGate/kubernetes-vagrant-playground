@@ -6,6 +6,7 @@ This repository contains Ansible playbooks and configuration for setting up a Ku
 
 ## Prerequisites
 
+- [libvirt](https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/index.html)
 - [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
 - [Vagrant](https://developer.hashicorp.com/vagrant/install)
 - [Vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
