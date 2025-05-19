@@ -6,11 +6,44 @@ This repository contains Ansible playbooks and configuration for setting up a Ku
 
 ## Prerequisites
 
-- [libvirt](https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/index.html)
+- [libvirt for Ubuntu](https://documentation.ubuntu.com/server/how-to/virtualisation/libvirt/index.html)
+- [libvrit for Fedora](https://docs.fedoraproject.org/en-US/quick-docs/virtualization-getting-started)
 - [Packer](https://developer.hashicorp.com/packer/tutorials/docker-get-started/get-started-install-cli)
 - [Vagrant](https://developer.hashicorp.com/vagrant/install)
+- [QEMU](https://www.qemu.org/download/#linux)
 - [Vagrant-libvirt](https://vagrant-libvirt.github.io/vagrant-libvirt/)
 - [Ansible](https://docs.ansible.com/ansible/latest/installation_guide/)
+
+For Ubuntu:
+
+```bash
+sudo apt update
+sudo apt install -y qemu-system libvirt-dev virt-manager qemu-efi libvirt-daemon-system ebtables libguestfs-tools ruby-fog-libvirt
+sudo adduser $USER libvirt
+# Homebrew packages for HashiCorp will not receive updates due to BUSL, use apt instead
+wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+sudo apt update
+sudo apt install vagrant packer
+vagrant plugin install vagrant-libvirt
+sudo apt install pipx
+pipx ensurepath
+pipx install --include-deps ansible
+```
+
+For Fedora:
+
+```bash
+sudo dnf install @virtualization libvirt-devel virt-manager qemu-efi
+sudo adduser $USER libvirt
+sudo dnf install -y dnf-plugins-core
+sudo dnf config-manager addrepo --from-repofile=https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
+sudo dnf -y install vagrant packer
+vagrant plugin install vagrant-libvirt
+sudo dnf -y install pipx
+pipx ensurepath
+pipx install --include-deps ansible
+```
 
 ## Architecture
 
