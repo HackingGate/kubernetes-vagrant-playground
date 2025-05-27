@@ -9,4 +9,4 @@
       ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/base-install-containerd.yml"
 
     - name: "Install k8s"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/base-install-k8s.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/base-install-kubernetes.yml"
