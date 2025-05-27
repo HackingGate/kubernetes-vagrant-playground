@@ -24,7 +24,7 @@ variable "version" {
 source "vagrant" "{{ distribution }}-base" {
   provider     = "libvirt"
   communicator = "ssh"
-  source_path  = "common-base"  # Use common-base box instead of generic/debian12
+  source_path  = "generic/debian12"
   add_force    = true
   box_name     = "{{ distribution }}-base"
 }

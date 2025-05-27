@@ -78,20 +78,7 @@ vagrant box add generic/debian12 --provider=libvirt
 
 ### Build Base Box with Packer
 
-First, build the common base box:
-
-```bash
-# Build the common base box
-./build-base-box.sh common
-```
-
-This command will:
-
-1. Download the Debian 12 base box
-2. Install system updates and required packages
-3. Package the resulting VM into a new Vagrant box called "common-base"
-
-Then, choose which Kubernetes distribution you want to use:
+Choose which Kubernetes distribution you want to use:
 
 ```bash
 # For standard Kubernetes (k8s)
@@ -109,7 +96,7 @@ Then, choose which Kubernetes distribution you want to use:
 
 This command will:
 
-1. Use the common base box as a starting point
+1. Use the generic/debian12 box as a starting point
 2. Install containerd container runtime
 3. Install the selected Kubernetes distribution
 4. Package the resulting VM into a new Vagrant box
@@ -183,10 +170,6 @@ When you're done experimenting, you can destroy all VMs:
 ### Remove Base Boxes
 
 ```bash
-# Remove common base box
-vagrant box remove common-base
-rm -rf output-common-base
-
 # For standard Kubernetes (k8s)
 vagrant box remove k8s-base
 rm -rf output-k8s-base
