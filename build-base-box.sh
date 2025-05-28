@@ -37,4 +37,21 @@ else
   packer build -force -var "version=$VERSION" "packer/$DISTRIBUTION-base-box.pkr.hcl"
 fi
 
+# Add the built box to Vagrant's box registry
+BOX_NAME="${DISTRIBUTION}-base"
+BOX_PATH="output-${DISTRIBUTION}-base/package.box"
+
+if [ -f "$BOX_PATH" ]; then
+  echo "Adding $BOX_NAME box to Vagrant..."
+  # Remove existing box if it exists to avoid conflicts
+  if vagrant box list | grep -q "$BOX_NAME"; then
+    echo "Removing existing $BOX_NAME box..."
+    vagrant box remove "$BOX_NAME" --provider=libvirt --force
+  fi
+  vagrant box add "$BOX_NAME" "$BOX_PATH" --provider=libvirt
+  echo "$BOX_NAME box added successfully to Vagrant!"
+else
+  echo "Warning: Box file not found at $BOX_PATH"
+fi
+
 echo "$DISTRIBUTION base box built successfully!"
