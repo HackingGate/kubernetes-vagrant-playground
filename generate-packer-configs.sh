@@ -17,10 +17,7 @@ fetch_latest_k3s_version() {
   # Get latest stable version from GitHub API
   local latest_version=$(curl -s https://api.github.com/repos/k3s-io/k3s/releases | grep "tag_name" | grep -v "alpha\|beta\|rc" | head -n 1 | cut -d '"' -f 4)
   
-  # Extract only major.minor version (removing v prefix and patch version)
-  local major_minor_version=$(echo "$latest_version" | sed 's/^v//' | cut -d. -f1-2)
-  
-  echo "$major_minor_version"
+  echo "$latest_version"
 }
 
 # Function to fetch latest stable k0s version
@@ -28,10 +25,7 @@ fetch_latest_k0s_version() {
   # Get latest stable version from k0s API
   local latest_version=$(curl -sSLf "https://docs.k0sproject.io/stable.txt")
   
-  # Extract only major.minor version (removing v prefix and patch version)
-  local major_minor_version=$(echo "$latest_version" | sed 's/^v//' | cut -d. -f1-2)
-  
-  echo "$major_minor_version"
+  echo "$latest_version"
 }
 
 # Function to generate Packer configurations from template

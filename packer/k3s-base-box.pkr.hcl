@@ -18,7 +18,7 @@ variable "distribution" {
 
 variable "version" {
   type    = string
-  default = "1.33"
+  default = "v1.33.1+k3s1"
 }
 
 source "vagrant" "k3s-base" {
