@@ -1,0 +1,57 @@
+#!/bin/bash
+set -e  # Exit immediately if a command exits with non-zero status
+
+# Check if distribution is provided
+if [ -z "$1" ]; then
+  echo "Usage: $0 <distribution> [version]"
+  echo "  distribution: k8s, k3s, or k0s"
+  echo "  version: Optional version override for k8s/k3s/k0s (default: uses version in packer config)"
+  exit 1
+fi
+
+DISTRIBUTION=$1
+VERSION=$2
+
+# Validate distribution
+if [[ ! "$DISTRIBUTION" =~ ^(k8s|k3s|k0s)$ ]]; then
+  echo "Error: Distribution must be k8s, k3s, or k0s"
+  exit 1
+fi
+
+# Check if generic/debian12 box exists
+if ! vagrant box list | grep -q "generic/debian12"; then
+  echo "generic/debian12 box not found. Adding it now..."
+  vagrant box add generic/debian12 --provider=libvirt
+else
+  echo "generic/debian12 box already exists. Using existing box."
+fi
+
+echo "Building $DISTRIBUTION base box..."
+
+# Init packer
+packer init "packer/$DISTRIBUTION-base-box.pkr.hcl"
+# Build distribution-specific base box with optional version override
+if [ -z "$VERSION" ]; then
+  packer build -force "packer/$DISTRIBUTION-base-box.pkr.hcl"
+else
+  packer build -force -var "version=$VERSION" "packer/$DISTRIBUTION-base-box.pkr.hcl"
+fi
+
+# Add the built box to Vagrant's box registry
+BOX_NAME="${DISTRIBUTION}-base"
+BOX_PATH="output-${DISTRIBUTION}-base/package.box"
+
+if [ -f "$BOX_PATH" ]; then
+  echo "Adding $BOX_NAME box to Vagrant..."
+  # Remove existing box if it exists to avoid conflicts
+  if vagrant box list | grep -q "$BOX_NAME"; then
+    echo "Removing existing $BOX_NAME box..."
+    vagrant box remove "$BOX_NAME" --provider=libvirt --force
+  fi
+  vagrant box add "$BOX_NAME" "$BOX_PATH" --provider=libvirt
+  echo "$BOX_NAME box added successfully to Vagrant!"
+else
+  echo "Warning: Box file not found at $BOX_PATH"
+fi
+
+echo "$DISTRIBUTION base box built successfully!"
