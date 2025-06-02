@@ -1,9 +1,0 @@
-- name: Update the package list and upgrade all packages
-  apt:
-    update_cache: yes
-    upgrade: yes
-    autoremove: yes
-
-- name: Reboot the instance
-  reboot:
-    reboot_timeout: 300
