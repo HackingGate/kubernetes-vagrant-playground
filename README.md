@@ -8,7 +8,7 @@ This repository contains Ansible playbooks and configuration for setting up Kube
 - **k3s**: Lightweight Kubernetes distribution by Rancher
 - **k0s**: Zero-friction Kubernetes distribution by Mirantis
 
-Each distribution creates a three-node cluster with one control plane and two worker nodes, all running on Debian 12.
+Each distribution creates a three-node cluster with one control plane/server and two worker/agent nodes, all running on Debian 12.
 
 ## Prerequisites
 
@@ -55,8 +55,8 @@ pipx install --include-deps ansible
 
 Each cluster consists of:
 
-- 1 control plane node (2GB RAM, 2 CPUs)
-- 2 worker nodes (2GB RAM, 2 CPUs each)
+- 1 control plane/server node (2GB RAM, 2 CPUs)
+- 2 worker/agent nodes (2GB RAM, 2 CPUs each)
 - Private network: 192.168.121.0/24
 - Pod network: 10.244.0.0/16
 
@@ -98,8 +98,10 @@ This command will:
 
 1. Use the generic/debian12 box as a starting point
 2. Install containerd container runtime
-3. Install the selected Kubernetes distribution
+3. Install basic system dependencies (for k8s and k0s)
 4. Package the resulting VM into a new Vagrant box
+
+Note: k3s uses a simpler approach and installs k3s during cluster setup rather than in the base image.
 
 ### Create the Virtual Machines and Provision the Kubernetes Cluster
 
@@ -117,27 +119,27 @@ This command will:
 This command will:
 
 1. Create three virtual machines using the appropriate base box
-2. Initialize the Kubernetes control plane
+2. Initialize the Kubernetes control plane/server
 3. Set up pod networking
-4. Generate join tokens for worker nodes
-5. Join worker nodes to the cluster
-6. Install Helm package manager on the control plane
+4. Generate join tokens for worker/agent nodes
+5. Join worker/agent nodes to the cluster
+6. Install Helm package manager on the control plane/server (k8s and k0s only)
 
 ### Access and Verify the Cluster
 
-The kubeconfig file is automatically configured on the control plane node. To access and verify the cluster:
+The kubeconfig file is automatically configured on the control plane/server node. To access and verify the cluster:
 
-1. SSH into the control plane:
+1. SSH into the control plane/server:
 
    ```bash
    # For standard Kubernetes (k8s)
-   vagrant ssh k8s-control
+   cd k8s && vagrant ssh k8s-master
 
    # For k3s
-   cd k3s && vagrant ssh k3s-control
+   cd k3s && vagrant ssh k3s-server
 
    # For k0s
-   cd k0s && vagrant ssh k0s-control
+   cd k0s && vagrant ssh k0s-controller
    ```
 
 2. Verify cluster status:
@@ -150,7 +152,7 @@ The kubeconfig file is automatically configured on the control plane node. To ac
    kubectl get pods -A
    ```
 
-You should see three nodes (one control plane and two workers) in Ready state.
+You should see three nodes (one control plane/server and two workers/agents) in Ready state.
 
 ### Destroy the Cluster
 
@@ -187,9 +189,9 @@ rm -rf output-k0s-base
 
 For all distributions:
 
-- Control plane: 192.168.121.10
-- Worker 1: 192.168.121.11
-- Worker 2: 192.168.121.12
+- Control plane/Server: 192.168.121.10
+- Worker/Agent 1: 192.168.121.11
+- Worker/Agent 2: 192.168.121.12
 
 ## Comparison of Kubernetes Distributions
 
@@ -203,7 +205,8 @@ For all distributions:
 ### k3s (Rancher)
 
 - Lightweight Kubernetes distribution
-- Single binary installation
+- Uses server/agent terminology (instead of control plane/worker)
+- Installs directly via `get.k3s.io` during cluster setup
 - Lower resource requirements
 - Suitable for edge computing, IoT, and development environments
 

@@ -7,11 +7,11 @@
   ansible.builtin.copy:
     content: |
       #!/bin/bash
-      curl -sfL https://get.k3s.io | K3S_URL=https://{{ control_ip }}:6443 K3S_TOKEN={{ node_token.content | b64decode }} sh -s - --node-ip=${1} --flannel-iface=eth1
+      curl -sfL https://get.k3s.io | K3S_URL=https://{{ control_ip }}:6443 K3S_TOKEN={{ node_token.content | b64decode }} sh -s - agent --node-ip=${1} --flannel-iface=eth1
     dest: /tmp/k3s-join.sh
     mode: "0755"
 
-- name: Fetch /tmp/k3s-join.sh from control node to local
+- name: Fetch /tmp/k3s-join.sh from server to local
   fetch:
     src: /tmp/k3s-join.sh
     dest: ./k3s-join.sh

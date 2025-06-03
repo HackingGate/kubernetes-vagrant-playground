@@ -6,28 +6,29 @@
     timeout: 600
   delegate_to: localhost
 
-- name: Check if node is already joined
-  shell: systemctl status k3s-agent | grep "Active:" | grep -w "active (running)"
-  register: node_check
+- name: Check if k3s agent is already running
+  shell: systemctl is-active k3s-agent
+  register: k3s_agent_check
   ignore_errors: true
   changed_when: false
 
-- name: Push join script to /tmp/k3s-join.sh on each worker
+- name: Push join script to /tmp/k3s-join.sh on each agent
   copy:
     src: ./k3s-join.sh
     dest: /tmp/k3s-join.sh
     mode: "0755"
-  when: node_check.rc != 0
+  when: k3s_agent_check.rc != 0
 
-- name: "Join the node to cluster"
+- name: "Join the agent to cluster"
   shell: /tmp/k3s-join.sh {{ ansible_host }}
   register: join_command_result
   until: join_command_result.rc == 0
   retries: 30
   delay: 5
-  when: node_check.rc != 0
+  when: k3s_agent_check.rc != 0
 
 - name: Clean up join script
   file:
     path: /tmp/k3s-join.sh
     state: absent
+  when: k3s_agent_check.rc != 0

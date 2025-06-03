@@ -22,8 +22,8 @@ Vagrant.configure("2") do |config|
   end
 
   # Control Node
-  config.vm.define "k3s-control" do |control|
-    control.vm.hostname = "k3s-control"
+  config.vm.define "k3s-server" do |control|
+    control.vm.hostname = "k3s-server"
     control.vm.network "private_network", ip: CONTROL_IP
 
     # Trigger to remove obsolete join script from the host machine
@@ -44,14 +44,14 @@ Vagrant.configure("2") do |config|
         pod_network_cidr: POD_NETWORK_CIDR,
         control_ip: CONTROL_IP,
       }
-      ansible.playbook = "control-playbook.yml"
+      ansible.playbook = "server-playbook.yml"
     end
   end
 
   # Worker Nodes
   WORKER_IPS.each_with_index do |ip, i|
-    config.vm.define "k3s-worker-#{i+1}", depends_on: ["k3s-control"] do |worker|
-      worker.vm.hostname = "k3s-worker-#{i+1}"
+    config.vm.define "k3s-agent-#{i+1}", depends_on: ["k3s-server"] do |worker|
+      worker.vm.hostname = "k3s-agent-#{i+1}"
       worker.vm.network "private_network", ip: ip
       
       worker.vm.provider "libvirt" do |lv|
@@ -62,7 +62,7 @@ Vagrant.configure("2") do |config|
       
       worker.vm.provision "ansible" do |ansible|
         ansible_config.call(ansible)
-        ansible.playbook = "worker-playbook.yml"
+        ansible.playbook = "agent-playbook.yml"
       end
     end
   end

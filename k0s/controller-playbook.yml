@@ -6,10 +6,10 @@
       ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/common-disable-swap.yml"
 
     - name: "Setup k0s on control node"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/control-setup-k0s.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/controller-setup-k0s.yml"
 
     - name: "Setup Helm on control node"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/control-setup-helm.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/controller-setup-helm.yml"
 
     - name: "Generate join command on control node"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/control-generate-join.yml"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/controller-generate-join.yml"

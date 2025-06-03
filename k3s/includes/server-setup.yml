@@ -1,27 +1,63 @@
+- name: Install Required Packages for k3s
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg
+    update_cache: true
+    state: present
+
+- name: Configure kernel modules for containerd
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Load kernel modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: Configure sysctl parameters
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: Apply sysctl parameters
+  command: sysctl --system
+
 - name: Determine if the k3s server is already initialized
   ansible.builtin.stat:
     path: /var/lib/rancher/k3s/server/node-token
   register: k3s_initialized
 
-- name: Initialize the k3s server
+- name: Install and initialize k3s server
   when: not k3s_initialized.stat.exists
-  ansible.builtin.command: >
-    k3s server --node-ip={{ control_ip }}
+  shell: >
+    curl -sfL https://get.k3s.io | sh -s - server
+    --node-ip={{ control_ip }}
     --advertise-address={{ control_ip }}
     --flannel-iface=eth1
     --write-kubeconfig-mode=644
     --disable=traefik
   environment:
-    INSTALL_K3S_EXEC: "--node-ip={{ control_ip }} --flannel-iface=eth1"
-  async: 60
-  poll: 0
+    INSTALL_K3S_VERSION: "{{ k3s_version | default('') }}"
 
 - name: Wait for k3s server to start
   when: not k3s_initialized.stat.exists
   ansible.builtin.wait_for:
     path: /var/lib/rancher/k3s/server/node-token
     state: present
-    timeout: 60
+    timeout: 120
 
 - name: Create .kube directory for vagrant user
   ansible.builtin.file:

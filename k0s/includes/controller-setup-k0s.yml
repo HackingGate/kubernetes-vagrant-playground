@@ -16,7 +16,7 @@
           address: {{ control_ip }}
           sans:
             - {{ control_ip }}
-            - k0s-control
+            - k0s-controller
         network:
           provider: kuberouter
           podCIDR: {{ pod_network_cidr }}
