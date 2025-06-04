@@ -1,0 +1,15 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Disable swap"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/common-disable-swap.yml"
+
+    - name: "Setup k8s on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/master-setup-k8s.yml"
+
+    - name: "Setup Helm on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/master-setup-helm.yml"
+
+    - name: "Generate join command on control node"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/master-generate-join.yml"

@@ -1,0 +1,92 @@
+- name: Determine if the k0s server is already initialized
+  ansible.builtin.stat:
+    path: /var/lib/k0s/pki/admin.conf
+  register: k0s_initialized
+
+- name: Create k0s configuration
+  when: not k0s_initialized.stat.exists
+  ansible.builtin.copy:
+    content: |
+      apiVersion: k0s.k0sproject.io/v1beta1
+      kind: ClusterConfig
+      metadata:
+        name: k0s-cluster
+      spec:
+        api:
+          address: {{ control_ip }}
+          sans:
+            - {{ control_ip }}
+            - k0s-controller
+        network:
+          provider: kuberouter
+          podCIDR: {{ pod_network_cidr }}
+          serviceCIDR: 10.96.0.0/12
+        telemetry:
+          enabled: false
+    dest: /etc/k0s/k0s.yaml
+    mode: "0644"
+
+- name: Initialize the k0s server
+  when: not k0s_initialized.stat.exists
+  ansible.builtin.command: k0s install controller --config /etc/k0s/k0s.yaml
+  register: k0s_install
+
+- name: Start k0s service
+  when: not k0s_initialized.stat.exists
+  ansible.builtin.systemd:
+    name: k0scontroller
+    state: started
+    enabled: true
+
+- name: Wait for k0s server to start
+  when: not k0s_initialized.stat.exists
+  ansible.builtin.wait_for:
+    path: /var/lib/k0s/pki/admin.conf
+    state: present
+    timeout: 120
+
+- name: Create .kube directory for vagrant user
+  ansible.builtin.file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: "0755"
+
+- name: Create .kube directory for root user
+  ansible.builtin.file:
+    path: /root/.kube
+    state: directory
+    mode: "0755"
+
+- name: Copy k0s kubeconfig to vagrant user's kubeconfig
+  ansible.builtin.copy:
+    src: /var/lib/k0s/pki/admin.conf
+    dest: /home/vagrant/.kube/config
+    remote_src: true
+    owner: vagrant
+    group: vagrant
+    mode: "0600"
+
+- name: Copy k0s kubeconfig to root user's kubeconfig
+  ansible.builtin.copy:
+    src: /var/lib/k0s/pki/admin.conf
+    dest: /root/.kube/config
+    remote_src: true
+    mode: "0600"
+
+- name: Update kubeconfig server address
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: "https://localhost:6443"
+    replace: "https://{{ control_ip }}:6443"
+  loop:
+    - /home/vagrant/.kube/config
+    - /root/.kube/config
+
+- name: Wait for k0s API server to be ready
+  ansible.builtin.command: kubectl get nodes
+  register: api_status
+  until: api_status.rc == 0
+  retries: 30
+  delay: 5

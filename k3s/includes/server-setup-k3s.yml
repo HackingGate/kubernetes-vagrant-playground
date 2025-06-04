@@ -1,0 +1,106 @@
+- name: Install Required Packages for k3s
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+      - gnupg
+    update_cache: true
+    state: present
+
+- name: Configure kernel modules for containerd
+  copy:
+    content: |
+      overlay
+      br_netfilter
+    dest: /etc/modules-load.d/containerd.conf
+
+- name: Load kernel modules
+  modprobe:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - overlay
+    - br_netfilter
+
+- name: Configure sysctl parameters
+  copy:
+    content: |
+      net.bridge.bridge-nf-call-iptables  = 1
+      net.ipv4.ip_forward                 = 1
+      net.bridge.bridge-nf-call-ip6tables = 1
+    dest: /etc/sysctl.d/99-kubernetes-cri.conf
+
+- name: Apply sysctl parameters
+  command: sysctl --system
+
+- name: Determine if the k3s server is already initialized
+  ansible.builtin.stat:
+    path: /var/lib/rancher/k3s/server/node-token
+  register: k3s_initialized
+
+- name: Install and initialize k3s server
+  when: not k3s_initialized.stat.exists
+  shell: >
+    curl -sfL https://get.k3s.io | sh -s - server
+    --node-ip={{ control_ip }}
+    --advertise-address={{ control_ip }}
+    --flannel-iface=eth1
+    --write-kubeconfig-mode=644
+    --disable=traefik
+  environment:
+    INSTALL_K3S_VERSION: "{{ k3s_version | default('') }}"
+
+- name: Wait for k3s server to start
+  when: not k3s_initialized.stat.exists
+  ansible.builtin.wait_for:
+    path: /var/lib/rancher/k3s/server/node-token
+    state: present
+    timeout: 120
+
+- name: Create .kube directory for vagrant user
+  ansible.builtin.file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: "0755"
+
+- name: Create .kube directory for root user
+  ansible.builtin.file:
+    path: /root/.kube
+    state: directory
+    mode: "0755"
+
+- name: Copy k3s kubeconfig to vagrant user's kubeconfig
+  ansible.builtin.copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /home/vagrant/.kube/config
+    remote_src: true
+    owner: vagrant
+    group: vagrant
+    mode: "0600"
+
+- name: Copy k3s kubeconfig to root user's kubeconfig
+  ansible.builtin.copy:
+    src: /etc/rancher/k3s/k3s.yaml
+    dest: /root/.kube/config
+    remote_src: true
+    mode: "0600"
+
+- name: Update kubeconfig server address
+  ansible.builtin.replace:
+    path: "{{ item }}"
+    regexp: "https://127.0.0.1:6443"
+    replace: "https://{{ control_ip }}:6443"
+  loop:
+    - /home/vagrant/.kube/config
+    - /root/.kube/config
+
+- name: Wait for k3s API server to be ready
+  ansible.builtin.command: kubectl get nodes
+  register: api_status
+  until: api_status.rc == 0
+  retries: 30
+  delay: 5
