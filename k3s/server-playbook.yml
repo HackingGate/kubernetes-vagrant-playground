@@ -5,10 +5,10 @@
     - name: "Disable swap"
       ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/common-disable-swap.yml"
 
-    - name: "Setup k3s on control node"
+    - name: "Setup k3s server"
       ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/server-setup-k3s.yml"
 
-    - name: "Setup Helm on control node"
+    - name: "Setup Helm on k3s server"
       ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/server-setup-helm.yml"
 
     - name: "Generate join command on control node"
