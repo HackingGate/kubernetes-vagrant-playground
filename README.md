@@ -19,7 +19,7 @@ For Ubuntu:
 ```bash
 sudo apt update
 sudo apt install -y qemu-system libvirt-dev virt-manager qemu-efi libvirt-daemon-system ebtables libguestfs-tools ruby-fog-libvirt
-sudo adduser $USER libvirt
+sudo usermod -a -G libvirt $USER
 # Homebrew packages for HashiCorp will not receive updates due to BUSL, use apt instead
 wget -O - https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
 echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(grep -oP '(?<=UBUNTU_CODENAME=).*' /etc/os-release || lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
@@ -35,7 +35,7 @@ For Fedora:
 
 ```bash
 sudo dnf install @virtualization libvirt-devel virt-manager qemu-efi
-sudo adduser $USER libvirt
+sudo usermod -a -G libvirt $USER
 sudo dnf install -y dnf-plugins-core
 sudo dnf config-manager addrepo --from-repofile=https://rpm.releases.hashicorp.com/fedora/hashicorp.repo
 sudo dnf -y install vagrant packer
