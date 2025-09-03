@@ -7,7 +7,7 @@
   when: not k8s_initialized.stat.exists
   ansible.builtin.command: >
     kubeadm init --apiserver-advertise-address={{ control_ip }}
-    --apiserver-cert-extra-sans="k8s-control"
+    --apiserver-cert-extra-sans="k8s-master"
     --pod-network-cidr="{{ pod_network_cidr }}"
 
 - name: Create .kube directory for vagrant user

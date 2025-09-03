@@ -11,9 +11,14 @@ packer {
   }
 }
 
-variable "k8s_version" {
+variable "distribution" {
   type    = string
-  default = "v1.32"
+  default = "k8s"
+}
+
+variable "version" {
+  type    = string
+  default = "v1.33"
 }
 
 source "vagrant" "k8s-base" {
@@ -28,12 +33,12 @@ build {
   sources = ["source.vagrant.k8s-base"]
 
   provisioner "ansible" {
-    playbook_file = "./base-playbook.yml"
+    playbook_file = "./k8s/base-playbook.yml"
     user          = "vagrant"
     use_proxy     = false
 
     extra_arguments = [
-      "--extra-vars", "k8s_version=${var.k8s_version}"
+      "--extra-vars", "k8s_version=${var.version}"
     ]
   }
 }

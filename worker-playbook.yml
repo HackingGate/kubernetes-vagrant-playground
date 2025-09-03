@@ -1,9 +1,0 @@
----
-- hosts: all
-  become: true
-  tasks:
-    - name: "Disable swap"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/common-disable-swap.yml"
-
-    - name: "Run join command on worker nodes"
-      ansible.builtin.include_tasks: "{{ playbook_dir }}//includes/worker-join.yml"

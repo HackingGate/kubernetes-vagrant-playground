@@ -1,0 +1,6 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Update, upgrade, and restart instance"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/base-update-upgrade-reboot.yml"

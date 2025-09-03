@@ -1,0 +1,12 @@
+---
+- hosts: all
+  become: true
+  tasks:
+    - name: "Update, upgrade, and restart instance"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/base-update-upgrade-reboot.yml"
+
+    - name: "Install containerd"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/../common/includes/base-install-containerd.yml"
+
+    - name: "Install k0s"
+      ansible.builtin.include_tasks: "{{ playbook_dir }}/includes/base-install-k0s.yml"
